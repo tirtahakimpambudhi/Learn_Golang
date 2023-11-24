@@ -83,7 +83,7 @@ if _, err := io.Copy(targetFile, file); err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
     return
 }
-log.Printf("%v", fmt.Sprintf("%v", strings.Split(fileLocation, "/")))
+
 pathFile := strings.Split(fileLocation,"/")
 pathFileName := pathFile[len(pathFile) - 1]
 log.Printf("file '%v' success to save in direcory %v",filename,fileLocation)
@@ -97,5 +97,9 @@ log.Printf("file '%v' success to save in direcory %v",filename,fileLocation)
 
 func Download(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
-  fmt.Fprint(w,vars["image"])
+  image := vars["image"]
+  
+  pathfile := filepath.Join("static","img",image)
+  w.Header().Add("Content-Disposition",fmt.Sprintf("attachment;filename=%v",image))
+  http.ServeFile(w,r,pathfile)
 }
